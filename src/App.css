@@ -1,0 +1,103 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.mainSection {
+  flex-grow: 1;
+}
+
+.bgPrincipalBlog{
+  background: #e53938;
+}
+.colorFont{
+  color: #e53938;
+}
+.portadaRecetas{
+  position: relative;
+  top: 0px;
+}
+.banner {
+  object-fit: cover;
+  height: 395px;
+  width: 100%;
+}
+.tiuloPrincipal{
+  position: absolute;
+  top: 150px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+}
+.btnError{
+  background: #e53938;
+  width: 200px;
+  border: #e53938 .1em solid;
+}
+.btnError:hover{
+  background: #ed96a4;
+  border: #ed96a4 .1em solid;
+}
+
+.card-img-top-nueva {
+  height: 300px;
+  object-fit: cover;
+}
+
+.btnCardRecetas{
+  background:#ebd6ca;
+  border:#ebd6ca .1em solid;
+  color: #e53938;
+}
+.btnCardRecetas:hover{
+  background: #e53938;
+  border:  #e53938 .1em solid;
+  color: #ebd6ca;
+}
+.bodyCardReceta{
+  background: #ebd6ca;
+  color: #e53938;
+}
+.img-thumbnail{
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+.btnEditar{
+  background: #ed96a4;
+  border:   #ed96a4 .1em solid;
+}
+.btnBorrar{
+  background: #e53938;
+  border:  #e53938 .1em solid;
+}
+.btnEditar:hover{
+  background: #ed96a4;
+  border:   #ed96a4 .1em solid;
+  filter: opacity(80%);
+}
+.btnBorrar:hover{
+  background: #e53938;
+  border:   #e53938 .1em solid;
+  filter: opacity(80%);
+}
+.btnGuardar{
+  background: #e53938;
+  width: 200px;
+  border: #e53938 .1em solid;
+}
+.btnGuardar:hover{
+  background: #e53938;
+  border:   #e53938 .1em solid;
+  filter: opacity(80%);
+}
+.contenedorDetalleReceta{
+  background: #e53938;
+  color: #ebd6ca;
+}
