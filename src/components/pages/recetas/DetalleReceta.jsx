@@ -9,7 +9,6 @@ const DetalleReceta = () => {
   const [receta, setReceta] = useState({});
 
   useEffect(() => {
-    //buscar el producto que quiero maquetar
     cargarDetalle();
   }, []);
 
@@ -20,8 +19,8 @@ const DetalleReceta = () => {
       setReceta(datoReceta);
     } else {
       Swal.fire({
-        title: "Ocurrio un error",
-        text: "Intente realizar esta operacion en unos minutos",
+        title: "Ocurrió un error",
+        text: "Intente realizar esta operación en unos minutos",
         icon: "error",
       });
     }
@@ -42,7 +41,11 @@ const DetalleReceta = () => {
         </Col>
         <Col md={6}>
           <h5 className="mt-4">Ingredientes:</h5>
-          <p>{receta.ingredientes}</p>
+          <ListGroup>
+            {receta.ingredientes?.map((ing, index) => (
+              <ListGroup.Item key={index}>{ing}</ListGroup.Item>
+            ))}
+          </ListGroup>
         </Col>
         <Col md={6}>
           <h5 className="mt-4">Procedimiento:</h5>
