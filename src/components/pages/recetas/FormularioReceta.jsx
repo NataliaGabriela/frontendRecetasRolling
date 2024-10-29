@@ -1,85 +1,111 @@
 import { Form, Button } from "react-bootstrap";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { crearRecetaAPI, editarRecetasAPI, obtenerRecetaAPI } from "../../../helpers/queries";
 import { useParams, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-const FormularioReceta = ({editar, titulo}) => {
+
+const FormularioReceta = ({ editar, titulo }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     reset,
-    setValue
-  } = useForm();
-  const { id } = useParams();
-  const navegacion = useNavigate();
-  useEffect(() => {
-  if (editar) {
-    cargarDatosFormulario();
-  }
-}, []);
+    setValue,
+    control,
+  } = useForm({
+    defaultValues: {
+      ingredientes: [{ ingrediente: "" }] // Valores por defecto
+    }
+  });
+  
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "ingredientes",
+  });
 
-const cargarDatosFormulario = async () => {
-  const respuesta = await obtenerRecetaAPI(id);
-  if (respuesta.status === 200) {
-    const recetaBuscada = await respuesta.json();
-    setValue("nombreReceta", recetaBuscada.nombreReceta);
-    setValue("imagen", recetaBuscada.imagen);
-    setValue("categoria", recetaBuscada.categoria);
-    setValue("numero_comensales", recetaBuscada.numero_comensales);
-    setValue("tiempo_preparacion", recetaBuscada.tiempo_preparacion);
-    setValue("ingredientes", recetaBuscada.ingredientes);
-    setValue("procedimiento", recetaBuscada.procedimiento);
-  } else {
-    Swal.fire({
-      title: "Ocurrio un error",
-      text: "Intente realizar esta operacion en unos minutos",
-      icon: "error",
-    });
-  }
-};
-  const recetaValidada = async(receta) => {
-    try{
-      if (editar) {
-        const respuesta = await editarRecetasAPI(id, receta);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (editar) {
+      cargarDatosFormulario();
+    } else {
+      setIsLoading(false);
+    }
+  }, [editar]);
+
+  const cargarDatosFormulario = async () => {
+    try {
+      const respuesta = await obtenerRecetaAPI(id);
       if (respuesta.status === 200) {
-        Swal.fire({
-          title: "Receta editada",
-          text: `La receta: ${receta.nombreReceta}, fue editada correctamente`,
-          icon: "success",
-        });
-        navegacion("/administrador");
-      }else{
-        Swal.fire({
-          title: "Ocurrio un error",
-          text: "Intente modificar esta receta en unos minutos",
-          icon: "error",
-        });
+        const recetaBuscada = await respuesta.json();
+        // Establecemos los valores del formulario
+        setValue("nombreReceta", recetaBuscada.nombreReceta);
+        setValue("imagen", recetaBuscada.imagen);
+        setValue("categoria", recetaBuscada.categoria);
+        setValue("numero_comensales", recetaBuscada.numero_comensales);
+        setValue("tiempo_preparacion", recetaBuscada.tiempo_preparacion);
+        // Convertir la cadena de ingredientes en un array de objetos para FieldArray
+        setValue("ingredientes", recetaBuscada.ingredientes.map(ing => ({ ingrediente: ing })));
+        setValue("procedimiento", recetaBuscada.procedimiento);
+        setIsLoading(false);
+      } else {
+        throw new Error("Error al obtener la receta");
       }
-      }else{
-        const respuesta = await crearRecetaAPI(receta);
-        if(respuesta.status === 201){
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudieron cargar los datos de la receta. Intenta de nuevo más tarde.",
+        icon: "error",
+      });
+      setIsLoading(false);
+    }
+  };
+
+  const recetaValidada = async (receta) => {
+    try {
+      const ingredientesComoTexto = receta.ingredientes.map(item => item.ingrediente); // Convertir a texto simple
+      const recetaFormateada = { ...receta, ingredientes: ingredientesComoTexto };
+
+      if (editar) {
+        const respuesta = await editarRecetasAPI(id, recetaFormateada);
+        if (respuesta.status === 200) {
+          Swal.fire({
+            title: "Receta editada",
+            text: `La receta: ${receta.nombreReceta} fue editada correctamente`,
+            icon: "success",
+          });
+          navigate("/administrador");
+        } else {
+          throw new Error("Error al editar la receta");
+        }
+      } else {
+        const respuesta = await crearRecetaAPI(recetaFormateada);
+        if (respuesta.status === 201) {
           Swal.fire({
             title: "Receta creada",
             text: `La receta: ${receta.nombreReceta} fue creada correctamente`,
             icon: "success",
           });
-          reset();
-        }else{
-          Swal.fire({
-            title: "Ocurrio un error",
-            text: "Intente crear esta receta en unos minutos",
-            icon: "error",
-          });
+          reset(); // Limpiamos el formulario
+        } else {
+          throw new Error("Error al crear la receta");
         }
       }
-    }catch(error){
-      console.log(error)
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "Ocurrió un error al guardar la receta. Intenta de nuevo más tarde.",
+        icon: "error",
+      });
     }
-    
-  
   };
+
+  if (isLoading) {
+    return <p>Cargando datos...</p>;
+  }
 
   return (
     <section className="container mainSection">
@@ -187,66 +213,68 @@ const cargarDatosFormulario = async () => {
           {errors.tiempo_preparacion?.message}
           </Form.Text>
         </Form.Group>
+        {/* Ingredientes dinámicos */}
         <Form.Group className="mb-3" controlId="formIngredientes">
           <Form.Label>Ingredientes*</Form.Label>
-          <Form.Control
-            type="text"
-            placeholder="Ej:
-            1/2 kilo de harina 000
-            25 gr de pan de levadura fresco
-            1/2 cucharada de sal
-            4 cdas de aceite de oliva
-            1 cda de azúcar
-            1 taza de agua tibia
-            "
-            as="textarea"
-            {
-              ...register("ingredientes",{
-                required: "Debe ingresar los ingredientes de la receta",
-                minLength:{
-                  value: 5,
-                  message: "Debe ingresar como minimo 5 caracteres para los ingredientes"
-                },
-                maxLength:{
-                  value: 2000,
-                  message: "Debe ingresar como máximo 2000 caracteres para los ingredientes"
-                }
-              })
-            }
-          />
+          {fields.map((item, index) => (
+            <div key={item.id} className="d-flex align-items-center mb-2">
+              <Form.Control
+                type="text"
+                placeholder={`Ingrediente ${index + 1}`}
+                {...register(`ingredientes.${index}.ingrediente`, {
+                  required: "Debe ingresar un ingrediente",
+                  minLength: {
+                    value: 2,
+                    message: "El ingrediente debe tener al menos 2 caracteres",
+                  },
+                })}
+                className="me-2"
+              />
+              <Button
+                variant="danger"
+                onClick={() => remove(index)} // Eliminar ingrediente
+                className="btn-sm"
+              >
+                Eliminar
+              </Button>
+            </div>
+          ))}
           <Form.Text className="text-danger">
-          {errors.ingredientes?.message}
+            {errors.ingredientes?.[0]?.ingrediente && errors.ingredientes[0].ingrediente.message}
           </Form.Text>
+          <Button
+            variant="success"
+            onClick={() => append({ ingrediente: "" })} // Agregar nuevo ingrediente
+            className="mt-2"
+          >
+            Agregar ingrediente
+          </Button>
         </Form.Group>
+
+        {/* Campo para procedimiento */}
         <Form.Group className="mb-3" controlId="formProcedimiento">
           <Form.Label>Procedimiento*</Form.Label>
           <Form.Control
-            type="text"
-            placeholder="Ej: En un bol o taza colocar la levadura y media taza de agua tibia, agregar la cucharada de azúcar. Mezclar bien hasta que se formen burbujitas. Tapar con un nylon y dejar levar mas o menos 10 minutos.
-            En otro bol, colocar la harina y mezclarla con la sal. Hacer un hueco en el centro, y luego volcar la media taza de agua con la levadura. Incorporar el resto del agua tibia. Unir con las manos todos los ingredientes hasta formar una masa. Agregar en forma de hilo el aceite y volver a amasar.
-            Dejar descansar la masa para pizza unos 15 minutos, y luego amasarla en una mesa con harina. Dividir la masa en dos bollos del mismo tamaño.
-            Estirar la masa hasta lograr un círculo. Poner la masa en una fuente para pizza, dejar descansar en lugar templado hasta que leve un poquito. Aproximadamente 15 minutos.
-            Llevar a un horno fuerte unos 6 minutos. Esto es muy importante para que la masa para pizza quede bien cocida (principalmente la parte entre los ingredientes y la masa, si salteamos este punto quedará húmeda y cruda).
-            Agregar una cucharada abundante de salsa de tomate y llevar al horno 2 minutos más."
             as="textarea"
-            {
-              ...register("procedimiento",{
-                required: "El procedimiento de la receta es obligatorio",
-                minLength:{
-                  value: 5,
-                  message: "Debe ingresar como minimo 10 caracteres para el procedimiento"
-                },
-                maxLength:{
-                  value: 1000,
-                  message: "Debe ingresar como maximo 1000 caracteres para el procedimiento"
-                }
-              })
-            }
+            rows={6}
+            placeholder="Ej: Mezclar los ingredientes, amasar la masa, hornear..."
+            {...register("procedimiento", {
+              required: "El procedimiento de la receta es obligatorio",
+              minLength: {
+                value: 10,
+                message: "Debe ingresar como mínimo 10 caracteres para el procedimiento",
+              },
+              maxLength: {
+                value: 1000,
+                message: "Debe ingresar como máximo 1000 caracteres para el procedimiento",
+              },
+            })}
           />
           <Form.Text className="text-danger">
-          {errors.procedimiento?.message}
+            {errors.procedimiento?.message}
           </Form.Text>
         </Form.Group>
+
         
         <Button type="submit" className="btnGuardar">
           Guardar

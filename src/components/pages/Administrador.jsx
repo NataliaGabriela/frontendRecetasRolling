@@ -4,25 +4,29 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { leerRecetasAPI } from "../../helpers/queries";
 const Administrador = () => {
-    const [recetas, setRecetas] = useState([]);
+  const [recetas, setRecetas] = useState([]);
 
-useEffect(()=>{
-  traerRecetas();
-},[])
+  useEffect(() => {
+    traerRecetas();
+  }, []);
 
-const traerRecetas = async()=>{
-  try {
-     const listaRecetasAPI = await leerRecetasAPI();
-     setRecetas(listaRecetasAPI);
-  } catch (error) {
-    console.log(error)
-  }
-}
+  const traerRecetas = async () => {
+    try {
+      const listaRecetasAPI = await leerRecetasAPI();
+      setRecetas(listaRecetasAPI);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <section className="container mainSection">
       <div className="d-flex justify-content-between align-items-center mt-5">
-        <h1 className="display-4 colorFont {
-">Recetas Cargadas</h1>
+        <h1
+          className="display-4 colorFont {
+"
+        >
+          Recetas Cargadas
+        </h1>
         <Link className="btn btn-primary" to="/administrador/crear">
           <i className="bi bi-file-earmark-plus"></i>
         </Link>
@@ -39,9 +43,13 @@ const traerRecetas = async()=>{
           </tr>
         </thead>
         <tbody>
-        {
-            recetas.map((receta)=><ItemReceta key={receta.id} receta={receta}></ItemReceta>)
-          }
+          {recetas && recetas.length > 0 ? (
+            recetas.map((receta) => (
+              <ItemReceta key={receta.id} receta={receta}></ItemReceta>
+            ))
+          ) : (
+            <p>No hay recetas disponibles</p>
+          )}
         </tbody>
       </Table>
     </section>
