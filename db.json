@@ -1,24 +1,19 @@
 {
   "recetas": [
     {
-      "nombreReceta": "milanesas",
-      "imagen": "https://images.pexels.com/photos/18275671/pexels-photo-18275671/free-photo-of-pan-comida-brindis-madera.jpeg?auto=compress&cs=tinysrgb&w=600",
-      "categoria": "Salado",
-      "numero_comensales": "5",
-      "tiempo_preparacion": "20",
-      "ingredientes": "800 gramos carne de vaca\n4 huevos\n1 taza almidón de maíz Maizena\n1 litro aceite para freir\n3 tazas pan rallado\nperejil picado cantidad necesaria\n1 diente ajo picado",
-      "procedimiento": "Limpiar la carne vacuna y reservar.\nEn un bol batir levemente los huevos, la Maizena®, el perejil y el ajo picado. Reservar.\n\nArmado de las milanesas: Pasar la carne por la mezcla de maizena y huevo batido.Rebozar en el pan rallado reservar en la heladera por 15 minutos aprox.\nFreír las milanesas en abúndate aceite caliente (180°C) hasta que resulten bien doradas.",
-      "id": "c310"
-    },
-    {
-      "id": "aac7",
-      "nombreReceta": "Pollo Frito",
-      "imagen": "https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg?auto=compress&cs=tinysrgb&w=600",
+      "id": "db01",
+      "ingredientes": [
+        "harina integral",
+        "agua",
+        "sal",
+        "aceite"
+      ],
+      "nombreReceta": "Pizza Integral",
+      "imagen": "https://images.pexels.com/photos/1566837/pexels-photo-1566837.jpeg?auto=compress&cs=tinysrgb&w=600",
       "categoria": "Salado",
       "numero_comensales": "4",
       "tiempo_preparacion": "30",
-      "ingredientes": "1 pollo completo cortado en piezas y limpio.\n2 tazas de harina de trigo\n1 taza de pan rallado\n1 huevo\n1/2 taza de leche\nAjo en polvo.\n1 limón opcional\nPimienta negra molida\nAceite de sabor neutro canola, girasol o similar",
-      "procedimiento": "Es recomendable comenzar a preparar este pollo con una marinada, para que la carne tome más sabor. Para prepararla, solo hay que meter las piezas en un recipiente con el jugo del limón exprimido, pimienta, sal y ajo en polvo.\nHay que prestar atención a que las piezas queden impregnadas de la marinada, de forma más o menos uniforme, para que todas tomen sabor.\nEl recipiente con el pollo en marinada irá al refrigerador por dos horas, idealmente, o en casos con menos tiempo, mínimo 45 minutos."
+      "procedimiento": "mezclar y hornear"
     }
   ]
 }
